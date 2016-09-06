@@ -1,7 +1,7 @@
 <?php
 	$dbms="mysql";
-	$host="localhost"
-	$dbName="MessagePush;
+	$host="localhost";
+	$dbName="MessagePush";
 	$user="root";
 	$password="root";
 	$dsn="$dbms:host=$host;dbname=$dbName";

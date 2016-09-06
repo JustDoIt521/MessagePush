@@ -1,18 +1,19 @@
 <?php
 header("Content_Type:text/html;charset=utf8");
-require("connect.php");
+require_once("connect.php");
+require_once("mysql.php");
 $data=json_decode(file_get_contents("php://input"),true);
 $what=$data['what'];
 switch($what)
 {
 	case"login";
-	login();
-	break;
+		login();
+		break;
 	cae"register";
-	register();
-	break;
+		register();
+		break;
 	default:
-	echo "error message";
+		echo "error message";
 }
 function register()
 {
@@ -23,7 +24,14 @@ function register()
 	$res=$res->fetch();
 	if(empty($res))
 	{
-
+		$table="userlist";
+		$num=count($table);
+		$password=$data["password"];
+		$group="user".$num;
+		$sql="insert into userlist array_values('$username','$password','$group','$num')";
+		$pdo->query($sql);
+		totalGroup($group);
+		$array=array("message"=>"0","point"=>"注册成功");
 	}
 	else
 	{
