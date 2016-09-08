@@ -20,24 +20,27 @@ function register()
 	global $pdo,$data;
 	$username=$data["username"];
 	$sql="select * from userlist where name='$username'";
+	$sql=addslashes($sql);	
 	$res=$pdo->query($sql);
-	$res=$res->fetch();
 	if(empty($res))
 	{
-		$table="userlist";
-		$num=count($table);
 		$password=$data["password"];
-		$group="user".$num;
-		$sql="insert into userlist array_values('$username','$password','$group','$num')";
-		$pdo->query($sql);
-		totalGroup($group);
-		$array=array("message"=>"0","point"=>"注册成功");
+		$num=count("userlist")+1;
+		$id="message".$num;
+		$sql="insert into userlist values
+			('$username','$password	','$num','$id')";
+		$sql=addslashes($sql);
+		$pdo->exec($sql);
+		createMessage($id);
+		$array=array("message"=>"0");
+		echo json_encode(array("data"=>$array));
 	}
 	else
 	{
-		$array=array("message"=>"1","point"=>"该用户名已存在");
-		echo json_encode(array("data"=>$array));
+		$array=array("message"=>"1");
+		echo json_encode("data"=>$array);
 	}
+
 }
 function login()
 {
@@ -57,7 +60,7 @@ function login()
 	}
 	else
 	{
-		$array=array("message"=>"1","point"=>"用户名或密码错误");
+		$array=array("message"=>"1");
 		echo json_encode(array("data"=>$array));
 	}
 }

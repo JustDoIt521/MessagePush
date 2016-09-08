@@ -7,30 +7,22 @@
 		$num=$res->fetchColumn();
 		return $num;
 	}
-	function findGroups($username)
+	function createMessage($name)
 	{
 		global $pdo;
-		$sql="select * from userlist where name='$username'";
-		$res=$pdo->query($sql);
-		$res=$res->fetch();
-		$groups=$res["groups"];
-		return $groups;
-	}
-	function totalGroup($name)
-	{
-		global $pdo;
-		$sql="create table '$name' 
-			  (
-			  	group varchar(1000) not null,
-			  	id int not null
-			  )ENGINE=InnoDB DEFAULT CHARSET=utf8";
-		$res=$pdo->query($sql);
-	}
-	function createGroup($groups)
-	{
-		$sql="create table '$group'
-			  (
-			  		member varchar(100) not null
-			  )" ;
+		$sql="create table '$name'
+				(
+				where varchar(100) not null,
+				content text not null,
+				condition int default 0
+				)";
 		$pdo->query($sql);
 	}
+ 	function checkReturn()
+ 	{
+ 		global $pdo;
+ 		if($pdo->errorCode()=='00000')
+ 			return  0;
+ 		else
+ 			return 1;
+ 	}
