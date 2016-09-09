@@ -26,12 +26,14 @@ function register()
 	{
 		$password=$data["password"];
 		$num=count("userlist")+1;
-		$id="message".$num;
+		$mygroups="mygroups".$num;
 		$sql="insert into userlist values
-			('$username','$password	','$num','$id')";
+			('$username','$password	','$num','$mygroups')";
 		$sql=addslashes($sql);
 		$pdo->exec($sql);
-		createMessage($id);
+		mygroups($mygroups);
+		$addmembers="addmemebers".$num;
+		addmemebers($addmembers);       //creat a table to get people who want to join
 		$array=array("message"=>"0");
 		echo json_encode(array("data"=>$array));
 	}
@@ -40,7 +42,6 @@ function register()
 		$array=array("message"=>"1");
 		echo json_encode("data"=>$array);
 	}
-
 }
 function login()
 {

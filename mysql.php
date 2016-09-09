@@ -12,11 +12,32 @@
 		global $pdo;
 		$sql="create table '$name'
 				(
-				where varchar(100) not null,
-				content text not null,
-				condition int default 0
+					content text not null,
+					time varchara(100) not null
 				)";
-		$pdo->query($sql);
+		$pdo->exec($sql);
+	}
+	function mygroups($name)
+	{
+		global $pdo;
+		$sql="create table '$name'
+			(
+				groupName varchar(1000) not null,
+				groupID  varchar(1000) not null,
+				host varchar(50) not null
+ 			)"
+ 		$pdo->exec($sql);
+	}
+	function addmembers($name)
+	{
+		global $pdo;
+		$sql="create table '$name'
+			(
+				people varchar(1000) not null
+				groupName varchar(1000)  not null,
+				groupID varchar(1000) not null
+			)"
+		$pdo->exec($sql);
 	}
  	function checkReturn()
  	{
