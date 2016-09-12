@@ -27,13 +27,13 @@ function register()
 		$password=$data["password"];
 		$num=count("userlist")+1;
 		$mygroups="mygroups".$num;
+		$message="myMessage".$num;
 		$sql="insert into userlist values
-			('$username','$password	','$num','$mygroups')";
+			('$username','$password	','$num','$mygroups','$message')";
 		$sql=addslashes($sql);
 		$pdo->exec($sql);
-		mygroups($mygroups);
-		$addmembers="addmemebers".$num;
-		addmemebers($addmembers);       //creat a table to get people who want to join
+		mygroups($mygroups);      //create a table to save all my groups  my own's and my join's
+		message($message);       //creat a table to get message  (ask to join,refuse to join,allow to join)
 		$array=array("message"=>"0");
 		echo json_encode(array("data"=>$array));
 	}

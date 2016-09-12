@@ -9,7 +9,7 @@ switch($what)
 	case"createGroup":
 		groupCreate();
 		break;
-	case"insertMember":
+	case"joinGroup":
 		addMember();
 		break;
 	case"sendMessage":
@@ -21,24 +21,60 @@ switch($what)
 	case"askjoin":
 		askjoin();
 		break;
+
 	default:
 		echo $what;
 }
-function askjoin()
+function joinGroup()
+{
+	global $pdo,$data;
+	$type=$data["type"];
+	$groupName=$data["groupName"];
+	$groupID=$data["groupID"];
+	$people=$data["people"];
+	if($type=="yes")
+	{
+		$sql="insert into '$groupId' values
+			('$people')";
+		$pdo->exec($sql);
+	}
+	$sql="select * from userlist where name='$people'";
+	$res=$pdo->query($sql);
+	$res=$res->fetch();
+	$mymessage=$res["mymessage"];
+	$num=maxnum($mymessage,"id");
+	$sql="insert into '$mymessage'(people,groupName,id,type,result) values
+		('$people','$groupName','$num','0','$result')";
+	$pdo->exec($sql);
+}
+function askjoin()                      //
 {
 	global $pdo,$data;
 	$username=$data["username"];
 	$groupID=$data["groupID"];
-	$sql="select * from userlist where name='$username'";
+	$sql="select * from grouplist where id='$groupID'";         //to get the group's owner
 	$sql=addslashes($sql);
-	$pdo->exec($sdql);
+	$res=$pdo->query($sql);
+	$res=$res->fetch();
+	$owner=$res["owner"];
+	$groupName=$res["name"];
+	$sql="select * from userlist where name='$owner'";              //to get the owner's message table
+	$res=$pdo->query($sql);
+	$res=$res->fetch();
+	$myMessage=$res["mymessage"];
+	$num=maxnum($myMessage,"id");
+	$time=data('y-m-d H:i:s',time());
+	$sql="insert into '$mymessage'(people,time,groupName,groupID,type,id) values
+			('$username','$time','$groupName','$groupID','$num','0')";
+	$sql=addslashes($sql);
+	$pdo->exec($sql);
 	if(checkReturn())
 	{
 		$array=array("message"=>"0");
 		echo json_encode(array("data"=>$array));
 	}
 }
-function showGroups()
+function showGroups()                           
 {
 	global $pdo,$data;
 	$username=$data["username"];
@@ -53,10 +89,10 @@ function showGroups()
 	$array=$array->fetchAll();
 	print_r(json_encode(array("data"=>$array)));
 }
-function sendMessage()
+function sendMessage()                            
 {
 	global $pdo,$data;
-	$temp=$data["groups"];    //all ned to send message groups' id
+	$temp=$data["groups"];    //all need to send message groups' id
 	$group=explode("_",$temp);
 	$num=count($group);
 	$content=$data["content"];
@@ -73,54 +109,44 @@ function sendMessage()
 	echo json_encode(array("data"=>$array));
 	
 }
-function insertMember()
-{
-	global $pdo,$data;
-	$groupID=$data["groupID"];
-	$member=$data["member"];
-	$sql="select message from userlist where name='$memeber'";    //search the people 
-	$sql=addslashes($sql);
-	$res=$pdo->query($sql);
-	$res=$res->fetch();
-	$message=$res[0];                //select the member's message
-	$sql="insert into '$groupID' values 
-		('$memeber','$message')";
-	$sql=addslashes($sql);
-	$pdo->query($sql);
-	if(checkReturn())
-	{
-		$array=array("message"=>"0");
-		echo json_encode(array("data"=>$array));
-	}
-}
-function createGroup()
+function createGroup()                          //
 {
 	global $pdo,$data;
 	$groupName=$data["groupName"];
-	$sql="select max(number) from grouplist";  //select the max number to be id
+	$sql="select max(number) from grouplist";  //select the max number + 1 to be id
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$num=$res[0]+1;
 	$id="group".$num;
 	$owner=$data["username"];
 	$sql="insert into grouplist values    
-		('$groupName','$owner','$id','$num')";  //add the new group
+		('$groupName','$owner','$id','$num')";  //add the new group into grouplist
 	$sql=addslashes($sql);
 	$pdo->exec($sql);
 	$sql="create table '$id'
 		(
-		member varchar(1000) not null, 
-		)";										//create the group
+		member varchar(1000) not null 
+		)";										//create the group to save all memebers
 	$sql=addslashes($sql);  
 	$pdo->exec($sql);
 	if(checkReturn())
 	{
 		$name=$id."message";
-		createMessage($name);
+		createMessage($name);              //create the table to save all the host send's message
 		if(checkReturn())
 		{
 			$array=array("message"=>"0");
 			echo json_encode(array("data"=>$array));
 		}
 	}
+	$name=$data["username"];				//insert into mygroups the new create group
+	$sql="select * from userlist where name='$name'";
+	$sql=addslashes($sql);
+	$res=$pdo->query($sql);
+	$res=$res->fetch();
+	$mygroups=$res["mygroups"];
+	$sql="insert into '$mygroups' values 
+			('$groupName','$id','0');"
+	$sql=addslashes($sql);
+	$pdo->query($sql);
 }
