@@ -3,13 +3,13 @@ header("Content_Type:text/html;charset=utf8");
 require_once("connect.php");
 require_once("mysql.php");
 $data=json_decode(file_get_contents("php://input"),true);
-$what=$data['what'];
+$what=$data["what"];
 switch($what)
 {
-	case"login";
+	case"login":
 		login();
 		break;
-	cae"register";
+	case"register":
 		register();
 		break;
 	default:
@@ -19,18 +19,17 @@ function register()
 {
 	global $pdo,$data;
 	$username=$data["username"];
-	$sql="select * from userlist where name='$username'";
-	$sql=addslashes($sql);	
+	$sql="select count(*) from userlist where name='$username'";
 	$res=$pdo->query($sql);
-	if(empty($res))
+	$res=$res->fetch();
+	if($res[0]==0)
 	{
 		$password=$data["password"];
-		$num=count("userlist")+1;
+		$num=findnum("userlist")+1;
 		$mygroups="mygroups".$num;
 		$message="myMessage".$num;
 		$sql="insert into userlist values
-			('$username','$password	','$num','$mygroups','$message')";
-		$sql=addslashes($sql);
+			('$username','$password','$num','$mygroups','$message')";
 		$pdo->exec($sql);
 		mygroups($mygroups);      //create a table to save all my groups  my own's and my join's
 		message($message);       //creat a table to get message  (ask to join,refuse to join,allow to join)
@@ -40,7 +39,7 @@ function register()
 	else
 	{
 		$array=array("message"=>"1");
-		echo json_encode("data"=>$array);
+		echo json_encode(array("data"=>$array));
 	}
 }
 function login()
@@ -48,14 +47,17 @@ function login()
 	global $pdo,$data;
 	$username=$data["username"];
 	$sql="select * from userlist where name='$username'";
-	$sql=addslashes($sql);
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	if(!empty($res))
 	{
-		if($data["password"]==$res["password"])
+		if($res["password"]==$data["password"])
 		{
 			$array=array("message"=>"0");
+			echo json_encode(array("data"=>$array));
+		}else
+		{
+			$array=array("message"=>"1");
 			echo json_encode(array("data"=>$array));
 		}
 	}

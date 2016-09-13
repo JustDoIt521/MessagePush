@@ -94,7 +94,7 @@ function sendMessage()
 	global $pdo,$data;
 	$temp=$data["groups"];    //all need to send message groups' id
 	$group=explode("_",$temp);
-	$num=count($group);
+	$num=findnum($group);
 	$content=$data["content"];
 	$time=date('y-m-d H:i:s',time());
 	for($i=0;$i<$num;$i++)

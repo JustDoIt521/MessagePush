@@ -1,10 +1,12 @@
 <?php
-	function count($table)
+require_once("connect.php");
+	function findnum($table)
 	{	
 		global $pdo;
-		$sql="select Count(*) from '$table'";
+		$sql="select count(*) from $table";
 		$res=$pdo->query($sql);
-		$num=$res->fetchColumn();
+		$res=$res->fetch();
+		$num=$res[0];
 		return $num;
 	}
 	function maxnum($table,$type)
@@ -19,28 +21,28 @@
 	function createMessage($name)    //for the groups create a message table
 	{
 		global $pdo;
-		$sql="create table '$name'
+		$sql="create table $name
 				(
 					content text not null,
 					time varchara(100) not null
-				)";
+				)ENGINE=InnoDB DEFAULT CHARSET=utf8";
 		$pdo->exec($sql);
 	}
 	function mygroups($name)     //create a table to save all my groups owner or join
 	{
 		global $pdo;
-		$sql="create table '$name'
+		$sql="create table $name
 			(
 				groupName varchar(1000) not null,
 				groupID  varchar(1000) not null,
 				type int not null
- 			)"
+ 			)ENGINE=InnoDB DEFAULT CHARSET=utf8";
  		$pdo->exec($sql);
 	}
 	function message($name)    //for user create a message table 
 	{
 		global $pdo;
-		$sql="create table '$name'
+		$sql="create table $name
 			(
 				people varchar(1000) not null,
 				time varchar(1000),
@@ -49,7 +51,7 @@
 				id int not null,
 				type  int not null,
 				result varchar(100)
-			)"
+			)ENGINE=InnoDB DEFAULT CHARSET=utf8";
 		$pdo->exec($sql);
 	}
  	function checkReturn()
