@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html ng-app="myapp">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html:charset=utf-8">
+		<script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+	</head>
+	<body ng-controller="test">
+		createGroup:</br>
+		groupName:<input type="text" ng-model="CGgroupName"><br>
+		username:<input type="text" ng-model="CGgroupUsername"><br>
+		<button ng-click="createGroup()">createGroup</button><br>
+		showGroups:</br>
+		username:<input type="text"  ng-model="SGusername"><br>
+		<button ng-click="showGroups()">showgroups</button><br>
+		searchGroups:<br>
+		groupName:<input type="text" ng-model="SeGgroups"><br>
+		<button ng-click="searchGroup()">searchGroup</button><br>
+	</body>
+	<script>
+		var app=angular.module("myapp",[]);
+		app.controller("test",function($scope,$http)
+			{
+				$scope.searchGroup=function()
+				{
+					var groupName=$scope.SeGgroups;
+					var what="searchGroup";
+					var data={"what":what,"search":groupName};
+					$http.post("group.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}).error(function(response)
+					{
+						console.log("errorSearchGroup");
+					});
+				}
+				$scope.showGroups=function()
+				{
+					var username=$scope.SGusername;
+					var what="showGroups";
+					var data={"what":what,"username":username};
+					$http.post("group.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}).error(function(response)
+					{
+						console.log("errorShowGroups");
+					});
+				}
+				$scope.createGroup=function()
+				{
+					var groupName=$scope.CGgroupName;
+					var username=$scope.CGgroupUsername;
+					var what="createGroup";
+					var data={"what":what,"groupName":groupName,"username":username};
+					$http.post("group.php",data).success(function(response)
+						{
+							console.log(response.data);
+						}).error(function(response)
+						{
+							console.log("errorCreateGroup");
+						});
+				}
+			});
+	</script>
+</html>

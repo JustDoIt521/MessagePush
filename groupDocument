@@ -1,0 +1,5 @@
+createGroup 
+{
+	what:"createGroup",
+	username:xxx
+}

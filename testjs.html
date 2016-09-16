@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html ng-app="myapp">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html:charset=utf-8">
+		<script src="http://apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
+	</head>
+	<body ng-controller="test">
+		register :<br>
+		name:<input ng-model="registerName"><br>
+		password:<input ng-model="registerPassword"><br>
+		<button ng-click="register()">register</button><br>
+		login:<br>
+		name:<input ng-model="loginName"><br>
+		password:<input ng-model="loginPassword"><br>
+		<button ng-click="login()">login</button>
+	</body>
+	<script>
+		var app=angular.module('myapp',[]);
+		app.controller('test',function($scope,$http)
+			{
+				$scope.login=function()
+				{
+					var name=$scope.loginName;
+					var password=$scope.loginPassword;
+					var what="login";
+					var data={"what":what,"username":name,"password":password};
+					$http.post("login.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}).error(function(response)
+					{
+						console.log("errorlogin");
+					});
+				}
+				$scope.register=function()
+				{
+					var name=$scope.registerName;
+					var password=$scope.registerPassword;
+					var what="register";
+					var data={"what":what,"username":name,"password":password};
+					$http.post("login.php",data).success(function(response)
+						{
+							console.log(response.data);
+						}).error(function(response)
+						{
+							console.log("errorRegister");
+						});
+				}
+			});
+	</script>
+</html>

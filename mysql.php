@@ -12,11 +12,18 @@ require_once("connect.php");
 	function maxnum($table,$type)
 	{
 		global $pdo;
-		$sql="select max('$type') from '$table'";
+		$sql="select max($type) from $table";
 		$res=$pdo->query($sql);
 		$res=$res->fetch();
-		$num=$res[0]+1;
-		return $num;
+		if($res[0]==NULL)
+		{
+			$num=0;
+		}
+		else
+		{
+			$num=$res[0];
+		}
+		return $num+1;
 	}
 	function createMessage($name)    //for the groups create a message table
 	{
@@ -24,7 +31,7 @@ require_once("connect.php");
 		$sql="create table $name
 				(
 					content text not null,
-					time varchara(100) not null
+					time varchar(100) not null
 				)ENGINE=InnoDB DEFAULT CHARSET=utf8";
 		$pdo->exec($sql);
 	}

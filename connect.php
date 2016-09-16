@@ -2,8 +2,8 @@
 	$dbms="mysql";
 	$host="localhost";
 	$dbName="MessagePush";
-	$user="root";
-	$password="root";
+	$user='root';
+	$password="784863455";
 	$dsn="$dbms:host=$host;dbname=$dbName";
 	try
 	{

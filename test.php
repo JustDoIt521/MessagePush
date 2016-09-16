@@ -4,18 +4,30 @@ print_r($array)."<br>";
 $str=array("hahah"=>$array);
 print_r($str);*/
 require("connect.php");
-$name="showtime";
+//$name="showtime";
 /*$sql="create table $name
 		(
 		name varchar(1000) not null 
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8";*/
-$sql="select * from userlist where name='lishang'";
+//$sql="select * from userlist where name='lishang'";
+$type="num";
+$table="grouplist";
+$sql="select  max($type) from $table";
 $res=$pdo->query($sql);
 $res=$res->fetch();
-$password=$res["password"];
+if($res[0]==NULL)
+{
+	echo "1";
+}
+else
+{
+	print_r($res);
+}
+/*$password=$res["password"];
 echo $password;
 echo strlen($password)."<br>";
 echo strcmp($password,"lishang");
+*/
 //print_r($res);
 //print_r($pdo->errorCode());
 //print_r($pdo->errorInfo())
