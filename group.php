@@ -27,8 +27,43 @@ switch($what)
 	case"searchGroup":
 		searchGroup();
 		break;
+	case"quitGroup":
+		quitGroup();
+		break;
+	case"deleteGroup":
+		deleteGroup();
+		break;
 	default:
 		echo $what;
+}
+function deleteGroup()
+{
+	global $pdo,$data;
+	$groupID=$data["groupID"];
+	$sql="select * from $groupID";
+	$res=$pdo->query($sql);
+	$res=$res->fetchAll();
+	$num=count($res);
+	for($i=0;$i<$num;$i++)
+	{
+		$sql=
+	}
+}
+function quitGroup()    /*ok*/
+{
+	global $pdo,$data;
+	$username=$data["username"];
+	$groupID=$data["groupID"];
+	$sql="delete from $groupID where member='$username'";
+	$pdo->exec($sql);
+	$sql="select * from userlist where name='$username'";
+	$res=$pdo->query($sql);
+	$res=$res->fetch();
+	$mygroup=$res["mygroups"];
+	$sql="delete from $mygroup where groupID='$groupID'";
+	$pdo->exec($sql);
+	$array=array("message"=>0);
+	echo json_encode(array("data"=>$array));
 }
 function showMymessage()  /*ok*/
 {
@@ -119,17 +154,24 @@ function joinGroup()   /*ok*/
 	$people=$data["people"];
 	$messageID=$data["messageID"];
 	$username=$data["username"];
+	$sql="select * from userlist where name='$people'";
+	$res=$pdo->query($sql);
+	$res=$res->fetch();
+	$mygroup=$res["mygroups"];
 	if($result=="yes")
 	{
 		$sql="insert into $groupID values
 			('$people')";
 		$pdo->exec($sql);
+		$sql="insert into $mygroup values
+			('$groupName','$groupID','1')";
+		$pdo->exec($sql);
 	}
 	$sql="select * from userlist where name='$username'";
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
-	$table=$res["mymessage"];
-	$sql="update $table set type='1' where id='$messageID'";                //mark the message readed
+	$myMessage=$res["mymessage"];	
+	$sql="update $myMessage set type='1' where id='$messageID'";                //mark the message readed
 	$pdo->exec($sql);
 	$sql="select * from userlist where name='$people'";
 	$res=$pdo->query($sql);
@@ -156,9 +198,13 @@ function createGroup()        /* ok*/
 	$pdo->exec($sql);
 	$sql="create table $id           				
 		(
-		member varchar(1000) not null 
+		member varchar(1000) not null,
+		mymessage varchar(1000) not null,
+		mygroup varchar(1000) not null 
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8";
 	$pdo->exec($sql);                           // create the group to save all memebers
+	$sql="insert into $id values ('$owner')";
+	$pdo->query($sql);
 	$name=$id."message";
 	createMessage($name);              //create the table to save all the host send's message
 	$array=array("message"=>"0");

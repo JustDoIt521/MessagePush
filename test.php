@@ -4,13 +4,17 @@ print_r($array)."<br>";
 $str=array("hahah"=>$array);
 print_r($str);*/
 require("connect.php");
+$sql="select * from mygroups1";
+$res=$pdo->query($sql);
+$res=$res->fetchAll();
+print_r($res[0]["groupName"]);
 //$name="showtime";
 /*$sql="create table $name
 		(
 		name varchar(1000) not null 
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8";*/
 //$sql="select * from userlist where name='lishang'";
-$type="num";
+/*$type="num";
 $table="grouplist";
 $sql="select  max($type) from $table";
 $res=$pdo->query($sql);
@@ -22,7 +26,7 @@ if($res[0]==NULL)
 else
 {
 	print_r($res);
-}
+}*/
 /*$password=$res["password"];
 echo $password;
 echo strlen($password)."<br>";

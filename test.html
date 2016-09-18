@@ -34,11 +34,28 @@
 		groupName:<input type="text" ng-model="JGgroupName"><br>
 		people:<input type="text" ng-model="JGpeople"><br>
 		<button ng-click="joinGroup()">joinGroup</button><br>
+		quitGroup:<br>
+		username:<input type="text" ng-model="QGusername"><br>
+		groupID:<input type="text" ng-model="QGgroupID"><br>
+		<button ng-click="quitGroup()">quitGroup</button><br>
 	</body>
 	<script>
 		var app=angular.module("myapp",[]);
 		app.controller("test",function($scope,$http)
 			{
+				$scope.quitGroup=function()
+				{
+					var username=$scope.QGusername;
+					var groupID=$scope.QGgroupID;
+					var data={"what":"quitGroup","username":username,"groupID":groupID};
+					$http.post("group.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}).error(function(response)
+					{
+						console.log("errorJoinGroup");
+					});
+				}
 				$scope.joinGroup=function()
 				{
 					var username=$scope.JGusername;

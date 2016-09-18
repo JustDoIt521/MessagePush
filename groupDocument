@@ -1,3 +1,20 @@
+grouplist
+create table userlist
+(
+	name varchar(1000) not null,
+	password varchar(100) not null,
+	id  int not null,
+	mygroups varchar(1000) not null,
+	mymessage varchar(1000) not null,
+	lastLogin varchar(100) not null
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+create table grouplist
+(
+	groupName varchar(100) not null,
+	owner  varchar(100) not null,
+	id varchar(100) not null,
+	num int not null
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;
 createGroup 
 {
 	what:"createGroup",
