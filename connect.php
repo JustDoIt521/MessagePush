@@ -3,7 +3,7 @@
 	$host="localhost";
 	$dbName="MessagePush";
 	$user='root';
-	$password="784863455";
+	$password="root";
 	$dsn="$dbms:host=$host;dbname=$dbName";
 	try
 	{

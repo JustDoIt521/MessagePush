@@ -10,7 +10,7 @@ switch($what)
 		createGroup();
 		break;
 	case"joinGroup":
-		addMember();
+		joinGroup();
 		break;
 	case"sendMessage":
 		sendMessage();
@@ -18,18 +18,30 @@ switch($what)
 	case"showGroups":
 		showGroups();
 		break;
-	case"askjoin":
-		askjoin();
+	case"requireJoin":
+		requireJoin();
 		break;
-	/*case"mygroups":
-		mygroups();
+	case "showMymessage":
+		showMymessage();
 		break;
-		*/
 	case"searchGroup":
 		searchGroup();
 		break;
 	default:
 		echo $what;
+}
+function showMymessage()  /*ok*/
+{
+	global $pdo,$data;
+	$username=$data["username"];
+	$sql="select * from userlist where name='$username'";
+	$res=$pdo->query($sql);
+	$res=$res->fetch();
+	$myMessage=$res["mymessage"];
+	$sql="select * from $myMessage where type!='1'";
+	$res=$pdo->query($sql);
+	$res=$res->fetchAll();
+	print_r(json_encode(array("data"=>$res)));
 }
 function searchGroup()   /*ok*/
 {
@@ -44,7 +56,7 @@ function searchGroup()   /*ok*/
 	$array=array_merge($res1,$res2);
 	print_r(json_encode(array("data"=>$array)));
 }
-function askjoin()                      
+function requireJoin()        /*ok*/                 
 {
 	global $pdo,$data;
 	$username=$data["username"];
@@ -53,20 +65,20 @@ function askjoin()
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$owner=$res["owner"];
-	$groupName=$res["name"];
+	$groupName=$res["groupName"];
 	$sql="select * from userlist where name='$owner'";              //to get the owner's message table
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$myMessage=$res["mymessage"];
 	$num=maxnum($myMessage,"id");
-	$time=data('y-m-d H:i:s',time());
-	$sql="insert into '$mymessage'(people,time,groupName,groupID,type,id) values
-			('$username','$time','$groupName','$groupID','$num','0')";
+	$time=date('y-m-d H:i:s',time());
+	$sql="insert into $myMessage (people,time,groupName,groupID,type,id) values
+			('$username','$time','$groupName','$groupID','0','$num')";
 	$pdo->exec($sql);
 	$array=array("message"=>"0");
 	echo json_encode(array("data"=>$array));
 }
-function showGroups()                           /**/
+function showGroups()                           /*ok*/
 {
 	global $pdo,$data;
 	$username=$data["username"];
@@ -79,45 +91,54 @@ function showGroups()                           /**/
 	$array=$array->fetchAll();
 	print_r(json_encode(array("data"=>$array)));
 }
-function sendMessage()                            
+function sendMessage()                            /*ok*/
 {
 	global $pdo,$data;
 	$temp=$data["groups"];    //all need to send message groups' id
 	$group=explode("_",$temp);
-	$num=findnum($group);
+	$num=count($group);
 	$content=$data["content"];
 	$time=date('y-m-d H:i:s',time());
 	for($i=0;$i<$num;$i++)
 	{
 		$table=$group[$i]."message";
-		$sql="insert into '$table' values
+		$sql="insert into $table values
 			('$content','$time')";
-		$pdo->query($sql);
+		$pdo->exec($sql);
 	}
 	$array=array("message"=>"0");
 	echo json_encode(array("data"=>$array));
 	
 }
-function joinGroup()
+function joinGroup()   /*ok*/
 {
 	global $pdo,$data;
 	$result=$data["result"];
 	$groupName=$data["groupName"];   
 	$groupID=$data["groupID"];
 	$people=$data["people"];
+	$messageID=$data["messageID"];
+	$username=$data["username"];
 	if($result=="yes")
 	{
-		$sql="insert into $groupId values
+		$sql="insert into $groupID values
 			('$people')";
 		$pdo->exec($sql);
 	}
+	$sql="select * from userlist where name='$username'";
+	$res=$pdo->query($sql);
+	$res=$res->fetch();
+	$table=$res["mymessage"];
+	$sql="update $table set type='1' where id='$messageID'";                //mark the message readed
+	$pdo->exec($sql);
 	$sql="select * from userlist where name='$people'";
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$mymessage=$res["mymessage"];
 	$num=maxnum($mymessage,"id");
-	$sql="insert into '$mymessage'(people,groupName,id,type,result) values
-		('$people','$groupName','$num','0','$result')";
+	$time=date('y-m-d H:i:s',time());
+	$sql="insert into $mymessage values
+		('$people','$time','$groupName','$groupID','$num','0','$result')";          //tell the people whether he is in
 	$pdo->exec($sql);
 	$array=array("message"=>0);
 	echo json_encode(array("data"=>$array));

@@ -15,11 +15,85 @@
 		searchGroups:<br>
 		groupName:<input type="text" ng-model="SeGgroups"><br>
 		<button ng-click="searchGroup()">searchGroup</button><br>
+		sendMessage:<br>
+		message:<input type="text" ng-model="message"><br>
+		groups:<input type="text" ng-model="SDgroups"><br>
+		<button ng-click="sendMessage()">sendMessage</button><br>
+		requirejoin:<br>
+		username:<input type="text" ng-model="RJusername"><br>
+		groupID:<input type="text" ng-model="RJgroupid"><br>
+		<button ng-click="requirejoin()">requireJoin</button><br>
+		showMymessage:<br>
+		username:<input type="text" ng-model="SMusername"><br>
+		<button ng-click="showMymessage()">showMymessage</button><br>
+		joinGroup:<br>
+		username:<input type="text" ng-model="JGusername"><br>
+		messageID:<input type="text" ng-model="JGmessageID"><br>
+		result:<input type="text" ng-model="result"><br>
+		groupID:<input type="text" ng-model="JGgroupID"><br>
+		groupName:<input type="text" ng-model="JGgroupName"><br>
+		people:<input type="text" ng-model="JGpeople"><br>
+		<button ng-click="joinGroup()">joinGroup</button><br>
 	</body>
 	<script>
 		var app=angular.module("myapp",[]);
 		app.controller("test",function($scope,$http)
 			{
+				$scope.joinGroup=function()
+				{
+					var username=$scope.JGusername;
+					var messageID=$scope.JGmessageID;
+					var result=$scope.result;
+					var groupID=$scope.JGgroupID;
+					var groupName=$scope.JGgroupName;
+					var people=$scope.JGpeople;
+					var data={"what":"joinGroup","username":username,"messageID":messageID,"result":result,"groupID":groupID,"groupName":groupName,"people":people};
+					$http.post("group.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}).error(function(response)
+					{
+						console.log("errorJoinGroup");
+					});
+				}
+				$scope.showMymessage=function()
+				{
+					var username=$scope.SMusername;
+					var data={"what":"showMymessage","username":username};
+					$http.post("group.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}).error(function(response)
+					{
+						console.log("errorShowMymessage");
+					});
+				}
+				$scope.requirejoin=function()
+				{
+					var username=$scope.RJusername;
+					var groupid=$scope.RJgroupid;
+					var data={"what":"requireJoin","username":username,"groupID":groupid};
+					$http.post("group.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}).error(function(response)
+					{
+						console.log("errorRequireJoin");
+					});
+				}
+				$scope.sendMessage=function()
+				{
+					var message=$scope.message;
+					var groups=$scope.SDgroups;
+					var data={"what":"sendMessage","groups":groups,"content":message};
+					$http.post("group.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}).error(function(response)
+					{
+						console.log("errorSendMessage");
+					});
+				}
 				$scope.searchGroup=function()
 				{
 					var groupName=$scope.SeGgroups;
