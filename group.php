@@ -36,7 +36,7 @@ switch($what)
 	default:
 		echo $what;
 }
-function deleteGroup()
+/*function deleteGroup()			//delete the group
 {
 	global $pdo,$data;
 	$groupID=$data["groupID"];
@@ -48,8 +48,8 @@ function deleteGroup()
 	{
 		$sql=
 	}
-}
-function quitGroup()    /*ok*/
+}*/
+function quitGroup()    /*ok*/          //exit the group
 {
 	global $pdo,$data;
 	$username=$data["username"];
@@ -121,10 +121,14 @@ function showGroups()                           /*ok*/
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$mygroups=$res["mygroups"];
-	$sql="select * from $mygroups";        //get his all groups
+	$sql="select * from $mygroups where type=0";        //get  groups  he created
 	$array=$pdo->query($sql);
 	$array=$array->fetchAll();
-	print_r(json_encode(array("data"=>$array)));
+	print_r(json_encode(array("data1"=>$array)));       
+	$sql="select * from $mygroups where type=1";		//get groups he joined
+	$array=$pdo->query($sql);
+	$array=$array->fetchAll();
+	print_r(json_encode(array("data2"=>$array)));
 }
 function sendMessage()                            /*ok*/
 {
@@ -158,10 +162,11 @@ function joinGroup()   /*ok*/
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$mygroup=$res["mygroups"];
+	$mymessage=$res["mymessage"];
 	if($result=="yes")
 	{
 		$sql="insert into $groupID values
-			('$people')";
+			('$people','$mymessage','$mygroup')";
 		$pdo->exec($sql);
 		$sql="insert into $mygroup values
 			('$groupName','$groupID','1')";
@@ -203,18 +208,20 @@ function createGroup()        /* ok*/
 		mygroup varchar(1000) not null 
 		)ENGINE=InnoDB DEFAULT CHARSET=utf8";
 	$pdo->exec($sql);                           // create the group to save all memebers
-	$sql="insert into $id values ('$owner')";
-	$pdo->query($sql);
 	$name=$id."message";
 	createMessage($name);              //create the table to save all the host send's message
-	$array=array("message"=>"0");
-	echo json_encode(array("data"=>$array));
 	$name=$data["username"];				//insert into mygroups the new create group
 	$sql="select * from userlist where name='$name'";
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$mygroups=$res["mygroups"];
+	$mymessage=$res["mymessage"];
+	$sql="insert into $id values               
+		('$owner','$mymessage','$mygroups')";           //insert the owner's message
+	$pdo->exec($sql);
 	$sql="insert into $mygroups values 
 			('$groupName','$id','0')";
 	$pdo->exec($sql);
+	$array=array("message"=>"0");
+	echo json_encode(array("data"=>$array));
 }

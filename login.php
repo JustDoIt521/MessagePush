@@ -28,8 +28,9 @@ function register()
 		$num=findnum("userlist")+1;
 		$mygroups="mygroups".$num;
 		$message="myMessage".$num;
+		$time=date('y-m-d H:i:s',time());
 		$sql="insert into userlist values
-			('$username','$password','$num','$mygroups','$message')";
+			('$username','$password','$num','$mygroups','$message','$time')";
 		$pdo->exec($sql);
 		mygroups($mygroups);      //create a table to save all my groups  my own's and my join's
 		message($message);       //creat a table to get message  (ask to join,refuse to join,allow to join)
