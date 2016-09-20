@@ -38,11 +38,56 @@
 		username:<input type="text" ng-model="QGusername"><br>
 		groupID:<input type="text" ng-model="QGgroupID"><br>
 		<button ng-click="quitGroup()">quitGroup</button><br>
+		deleteGroup:<br>
+		groupID:<input type="text" ng-model="DGgroupID"><br>
+		groupName:<input type="text" ng-model="DGgroupName"><br>
+		username:<input type="text" ng-model="DGusername"><br>
+		<button ng-click="deleteGroup()">deleteGroup</button><br>
+		showMember:<br>
+		groupID:<input type="text" ng-model="SMgroupID"><br>
+		<button ng-click="showMember()">showMember</button><br>
+		Message:<br>
+		groupID:<input type="text" ng-model="MgroupID"><br>
+		username:<input type="text" ng-model="Musername"><br>
+		<button ng-click="Message()">message</button><br>
 	</body>
 	<script>
 		var app=angular.module("myapp",[]);
 		app.controller("test",function($scope,$http)
 			{
+				$scope.Message=function()
+				{
+					var groupID=$scope.MgroupID;
+					var username=$scope.Musername;
+					var data={"what":"newMessage","username":username,"groupID":groupID};
+					$http.post("group.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}); 
+				}
+				$scope.showMember=function()
+				{
+					var groupID=$scope.SMgroupID;
+					var data={"what":"showMembers","groupID":groupID};
+					$http.post("group.php",data).success(function(response)
+						{
+							console.log(response.data);
+						});
+				}
+				$scope.deleteGroup=function()
+				{
+					var username=$scope.DGusername;
+					var groupID=$scope.DGgroupID;
+					var groupName=$scope.DGgroupName;
+					var data={"what":"deleteGroup","username":username,"groupID":groupID,"groupName":groupName};
+					$http.post("group.php",data).success(function(response)
+					{
+						console.log(response.data);
+					}).error(function(response)
+					{
+						console.log("errorDeleteGroup");
+					});
+				}
 				$scope.quitGroup=function()
 				{
 					var username=$scope.QGusername;

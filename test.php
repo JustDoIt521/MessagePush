@@ -4,10 +4,24 @@ print_r($array)."<br>";
 $str=array("hahah"=>$array);
 print_r($str);*/
 require("connect.php");
+$name="lelel";
+$sql="select * from userlist where id>2";
+$res=$pdo->query($sql);
+$res=$res->fetchAll();
+if($res==NULL)
+{
+echo "error";
+}
+else
+{
+	//$res=$res->fetchAll();
+print_r(array($name=>$res));
+}
+/*
 $sql="select * from mygroups1";
 $res=$pdo->query($sql);
 $res=$res->fetchAll();
-print_r($res[0]["groupName"]);
+print_r($res[0]["groupName"]);*/
 //$name="showtime";
 /*$sql="create table $name
 		(

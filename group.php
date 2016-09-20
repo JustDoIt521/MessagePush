@@ -33,22 +33,67 @@ switch($what)
 	case"deleteGroup":
 		deleteGroup();
 		break;
+	case"showMembers":
+		showmembers();
+		break;
+	case"newMessage":
+		newMessage();
+		break;
 	default:
 		echo $what;
 }
-/*function deleteGroup()			//delete the group
+function newMessage()
+{
+	global $pdo,$data;
+	$username=$data["username"];
+	$time=loginTime($username);
+	$groupID=$data["groupID"];
+	$num=haveMessage($groupID,$time);
+	$array=array("message"=>$num);
+	echo json_encode(array("data"=>$array));
+}
+function showMembers()
 {
 	global $pdo,$data;
 	$groupID=$data["groupID"];
 	$sql="select * from $groupID";
 	$res=$pdo->query($sql);
 	$res=$res->fetchAll();
+	print_r(json_encode(array("data"=>$res)));
+}
+function deleteGroup()			/*ok*/
+{
+	global $pdo,$data;
+	$username=$data["username"];
+	$groupID=$data["groupID"];
+	$groupName=$data["groupName"];
+	$sql="select * from $groupID";
+	$res=$pdo->query($sql);
+	$res=$res->fetchAll();
 	$num=count($res);
+	$time=date('y-m-d H:i:s',time());
+	$id=0;
+	$type="deleteGroup";
 	for($i=0;$i<$num;$i++)
-	{
-		$sql=
-	}
-}*/
+		{
+			$mygroups=$res[$i]["mygroup"];
+			$sql="delete from $mygroups where groupID='$groupID'";
+			$pdo->exec($sql);
+			$mymessage=$res[$i]["mymessage"];
+			$sql="insert into $mymessage values 
+				('$username','$time','$groupName','$groupID','$id','$type','0','$type')";
+			$pdo->exec($sql);
+		}
+	$sql="delete from grouplist where id='$groupID'";
+	$pdo->exec($sql);
+	$groupName=$groupID."message";
+	$sql="drop table $groupName";
+	$pdo->exec($sql);
+	$sql="drop table $groupID";
+	$pdo->exec($sql);
+	$array=array("message"=>0);
+	echo json_encode(array("data"=>$array));
+}
 function quitGroup()    /*ok*/          //exit the group
 {
 	global $pdo,$data;
@@ -73,10 +118,12 @@ function showMymessage()  /*ok*/
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$myMessage=$res["mymessage"];
-	$sql="select * from $myMessage where type!='1'";
+	$sql="select * from $myMessage where reading!='1'";
 	$res=$pdo->query($sql);
 	$res=$res->fetchAll();
 	print_r(json_encode(array("data"=>$res)));
+	$sql="update $myMessage set reading=1 where reading!=1";     //make these message to be readed
+	$pdo->exec($sql);
 }
 function searchGroup()   /*ok*/
 {
@@ -107,8 +154,9 @@ function requireJoin()        /*ok*/
 	$myMessage=$res["mymessage"];
 	$num=maxnum($myMessage,"id");
 	$time=date('y-m-d H:i:s',time());
-	$sql="insert into $myMessage (people,time,groupName,groupID,type,id) values
-			('$username','$time','$groupName','$groupID','0','$num')";
+	$type="askJoin";
+	$sql="insert into $myMessage (people,time,groupName,groupID,type,reading,id) values
+			('$username','$time','$groupName','$groupID','$type','0','$num')";
 	$pdo->exec($sql);
 	$array=array("message"=>"0");
 	echo json_encode(array("data"=>$array));
@@ -121,14 +169,10 @@ function showGroups()                           /*ok*/
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$mygroups=$res["mygroups"];
-	$sql="select * from $mygroups where type=0";        //get  groups  he created
+	$sql="select * from $mygroups";        //get  groups  he created and joined
 	$array=$pdo->query($sql);
 	$array=$array->fetchAll();
-	print_r(json_encode(array("data1"=>$array)));       
-	$sql="select * from $mygroups where type=1";		//get groups he joined
-	$array=$pdo->query($sql);
-	$array=$array->fetchAll();
-	print_r(json_encode(array("data2"=>$array)));
+	print_r(json_encode(array("data"=>$array)));
 }
 function sendMessage()                            /*ok*/
 {
@@ -163,8 +207,10 @@ function joinGroup()   /*ok*/
 	$res=$res->fetch();
 	$mygroup=$res["mygroups"];
 	$mymessage=$res["mymessage"];
+	$type="refuseJoin";
 	if($result=="yes")
 	{
+		$type="agreeJoin";
 		$sql="insert into $groupID values
 			('$people','$mymessage','$mygroup')";
 		$pdo->exec($sql);
@@ -176,7 +222,7 @@ function joinGroup()   /*ok*/
 	$res=$pdo->query($sql);
 	$res=$res->fetch();
 	$myMessage=$res["mymessage"];	
-	$sql="update $myMessage set type='1' where id='$messageID'";                //mark the message readed
+	$sql="update $myMessage set reading='1' where id='$messageID'";                //mark the message readed
 	$pdo->exec($sql);
 	$sql="select * from userlist where name='$people'";
 	$res=$pdo->query($sql);
@@ -185,7 +231,7 @@ function joinGroup()   /*ok*/
 	$num=maxnum($mymessage,"id");
 	$time=date('y-m-d H:i:s',time());
 	$sql="insert into $mymessage values
-		('$people','$time','$groupName','$groupID','$num','0','$result')";          //tell the people whether he is in
+		('$people','$time','$groupName','$groupID','$num','$type','0','$result')";          //tell the people whether he is in
 	$pdo->exec($sql);
 	$array=array("message"=>0);
 	echo json_encode(array("data"=>$array));

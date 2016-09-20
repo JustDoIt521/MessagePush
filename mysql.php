@@ -1,5 +1,30 @@
 <?php
 require_once("connect.php");
+	function haveMessage($groupID,$time)
+	{
+		global $pdo;
+		$message=$groupID."message";
+		$sql="select * from $message where time>'$time'";
+		$res=$pdo->query($sql);
+		$res=$res->fetchAll();
+		if($res==NUll)
+		{
+			return 0;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+	function loginTime($username)
+	{
+		global $pdo;
+		$sql="select * from userlist where name='$username'";
+		$res=$pdo->query($sql);
+		$res=$res->fetch();
+		$time=$res["lastLogin"];
+		return $time;
+	}
 	function findnum($table)
 	{	
 		global $pdo;
@@ -56,7 +81,8 @@ require_once("connect.php");
 				groupName varchar(1000),
 				groupID varchar(1000),
 				id int not null,
-				type  int not null,
+				type  varchar(1000) not null,
+				reading int not null,
 				result varchar(100)
 			)ENGINE=InnoDB DEFAULT CHARSET=utf8";
 		$pdo->exec($sql);
