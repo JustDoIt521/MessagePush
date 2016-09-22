@@ -39,8 +39,19 @@ switch($what)
 	case"newMessage":
 		newMessage();
 		break;
+	case"updateLogin":
+		updateLogin();
+		break;
 	default:
 		echo $what;
+}
+function updateLogin()
+{
+	global $pdo,$data;
+	$username=$data["username"];
+	$time=date('y-m-d H:i:s',time());
+	$sql="update userlist set  lastLogin='$time' where name='$username'";
+	$pdo->exec($sql);
 }
 function newMessage()
 {

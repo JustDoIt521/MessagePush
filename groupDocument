@@ -1,5 +1,4 @@
-grouplist
-create table userlist
+create table userlist			//创建用户列表
 (
 	name varchar(1000) not null,
 	password varchar(100) not null,
@@ -8,15 +7,90 @@ create table userlist
 	mymessage varchar(1000) not null,
 	lastLogin varchar(100) not null
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-create table grouplist
+
+create table grouplist			//创建群组列表
 (
 	groupName varchar(100) not null,
 	owner  varchar(100) not null,
 	id varchar(100) not null,
 	num int not null
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
-createGroup 
+
+//创建群组
 {
 	what:"createGroup",
 	username:xxx
 }
+
+//发送信息
+{
+	what:sendMessage,
+	groups:xxxx,   把用户所要发送的群的ID之间用“_”连接，发给我
+	content:xxxx
+}
+//显示所有的群组（创建的群组 type=0,加入的群组type=1）
+{
+	what:"showGroups",
+	username:xxxx
+}
+//请求加群
+{
+	what:"requireJoin",
+	username:xxxx,
+	groupID:xxxx
+}
+//搜索群
+{
+	what:"searchGroup",
+	search:xxxx
+}
+//显示我的消息 （比如我要加入的群或者请求加入我的群）
+{
+	what:"showMymessage",
+	username:xxxx,	
+}
+//处理那些请求加入群的消息
+{
+	what:"joinGroup",
+	result:xxx, (yes or no)
+	groupName:xxx,
+	groupID:xxx,
+	people:xxx,  (请求加群的人)
+	username:xxxx
+}
+//退出该群
+{
+	what:"quitGroup",
+	groupID:xxxx,
+	username:xxxx
+}
+//解散该群
+{
+	what:"deleteGroup",
+	groupID:xxx,
+	groupName:xxx
+}
+//显示群里面的人员
+{
+	what:"showMembers",
+	groupID:xxxx
+}
+//检测该群在上次登陆之后有没有新的消息
+{
+	what:"newMessage",
+	username:xxxx,
+	groupID:xxxx
+}
+//更新上次登陆的时间
+{
+	what:"updateLogin",
+	username:xxx
+}
+//
+关于返回值的问题  
+如果是有返回项 比如群组显示 
+data{xxxxx}
+如果是更新操作 类似删除群组
+data{"message"=>0}  返回message为0表示成功
+//最后 
+祝你好运 骚神
